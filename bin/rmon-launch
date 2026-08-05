@@ -1,0 +1,5 @@
+#!/bin/sh
+# Thin launcher so the snap's `command:` entry stays a stable, simple
+# path regardless of how the Python package is invoked.
+set -e
+exec python3 -m rmon "$@"

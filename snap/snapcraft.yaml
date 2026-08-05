@@ -1,0 +1,70 @@
+name: rmon
+title: rmon
+base: core24
+version: '0.1.0'
+summary: Live CPU, memory and swap usage in your top bar
+description: |
+  rmon is a lightweight system monitor that lives in the Ubuntu top bar.
+  It shows a compact, always-visible readout of overall CPU load, memory
+  usage and swap usage, updated every couple of seconds.
+
+  Click the indicator for full detail: usage per CPU core, memory and
+  swap in human-readable units, and a few preferences (refresh
+  interval, which metrics show in the top bar label, whether per-core
+  detail is shown in the dropdown).
+
+  rmon reads /proc/stat and /proc/meminfo directly -- no telemetry, no
+  network access, nothing phoning home.
+grade: stable
+confinement: strict
+license: MIT
+icon: data/icons/rmon.svg
+contact: rock@linux.com
+issues: https://github.com/janrock-dev/rmon/issues
+source-code: https://github.com/janrock-dev/rmon
+website: https://github.com/janrock-dev/rmon
+
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  rmon:
+    command: bin/rmon-launch
+    desktop: data/rmon.desktop
+    # Lets the app place $SNAP_USER_DATA/.config/autostart/rmon.desktop
+    # to start itself at login -- see rmon.app.set_autostart_enabled(),
+    # wired to the "Start rmon automatically at login" preference.
+    autostart: rmon.desktop
+    extensions: [gnome]
+    environment:
+      # Make the in-snap `rmon` package importable by the base's
+      # system python3 (the gnome extension wires up the rest of the
+      # GTK/GI environment for us).
+      PYTHONPATH: "$SNAP:$PYTHONPATH"
+
+parts:
+  rmon:
+    plugin: dump
+    source: .
+    stage-packages:
+      - python3-gi
+      - gir1.2-gtk-3.0
+      - gir1.2-ayatanaappindicator3-0.1
+      - libayatana-appindicator3-1
+      - libayatana-indicator3-7
+    prime:
+      # Note: this has to be an exclude-list, not an include-list --
+      # stage-packages (python3-gi, gtk3, appindicator, ...) land in
+      # this same part, and an include-list would filter those out
+      # too unless every one of their paths were enumerated here.
+      - -README.md
+      - -LICENSE
+      - -docs
+      - -snap
+      - -scripts
+      - -tests
+      - -pyproject.toml
+      - -.gitignore
+      - -**/__pycache__
+      - -**/*.pyc

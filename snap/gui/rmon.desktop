@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=rmon
+GenericName=System Resource Monitor
+Comment=Live CPU, memory and swap usage in your top bar
+Exec=rmon
+Icon=${SNAP}/data/icons/rmon.svg
+Terminal=false
+NoDisplay=false
+StartupNotify=false
+Categories=System;Monitor;Utility;
+Keywords=cpu;memory;ram;swap;monitor;performance;system;indicator;
+X-GNOME-UsesNotifications=false
+X-GNOME-Autostart-enabled=true
