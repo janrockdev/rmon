@@ -10,7 +10,14 @@ the Snap Store". Run all of this on an Ubuntu 24.04 machine (or a VM)
 sudo snap install snapcraft --classic
 sudo snap install lxd
 sudo lxd init --auto
+sudo usermod -aG lxd "$USER"
 ```
+
+That last line adds you to the `lxd` group, which snapcraft needs in
+order to talk to the LXD daemon without `sudo` — **log out and back in
+(or open a fresh terminal) before continuing**, group membership only
+takes effect in new login sessions. (`newgrp lxd` also works to pick
+it up in your *current* shell, without a full logout.)
 
 You'll also need an [Ubuntu One account](https://login.ubuntu.com/) —
 that's what the Snap Store uses for publisher identity.
@@ -19,10 +26,24 @@ that's what the Snap Store uses for publisher identity.
 
 ```sh
 cd rmon
-snapcraft
+snapcraft pack
 sudo snap install ./rmon_0.1.0_amd64.snap --dangerous
 rmon &
 ```
+
+If LXD errors out (permission errors, or "Timed out waiting for
+networking to be ready" -- both common, especially in VMs/containers),
+build straight on the host instead, skipping LXD entirely:
+
+```sh
+snapcraft pack --destructive-mode
+```
+
+This installs the build/stage packages directly onto your machine via
+apt rather than in a throwaway container. Fine for getting a snap
+built and tested; if you want a fully clean/reproducible build later
+(e.g. for CI), it's worth coming back and sorting out the LXD network
+issue instead (it's very often IPv6-on-the-bridge related).
 
 Check:
 - The indicator icon appears in the top bar with a live-updating

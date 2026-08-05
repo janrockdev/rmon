@@ -76,11 +76,27 @@ python3 -m unittest discover -s tests -v
 
 Requires [snapcraft](https://snapcraft.io/docs/snapcraft-overview)
 (`sudo snap install snapcraft --classic`) and either LXD or multipass
-as the build backend.
+as the build backend. If you install LXD (`sudo snap install lxd`),
+you also need to be in the `lxd` group (`sudo usermod -aG lxd $USER`,
+then start a new shell/log session for it to take effect) before
+snapcraft can use it.
 
 ```sh
-snapcraft            # builds ./rmon_0.1.0_amd64.snap
+snapcraft pack        # builds ./rmon_0.1.0_amd64.snap
 ```
+
+If LXD gives you grief (permission errors, or "Timed out waiting for
+networking to be ready" -- both common, especially in VMs/containers),
+skip the isolated build and build straight on your host instead:
+
+```sh
+snapcraft pack --destructive-mode
+```
+
+This installs the build/stage packages (GTK, AppIndicator, etc.)
+directly onto your machine via apt rather than in a throwaway
+container -- fine for a personal dev box, just not as pristine an
+environment as the LXD path.
 
 Install and try it locally before publishing anything:
 
